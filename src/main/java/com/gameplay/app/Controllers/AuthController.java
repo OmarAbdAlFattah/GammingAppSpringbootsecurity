@@ -16,9 +16,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 
+@RestController
+@RequestMapping(value = "/api")
 public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -32,7 +36,14 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping("/signin")
+    public AuthController(AuthenticationManager authenticationManager, UserRepo userRepository, RoleRepo roleRepository, PasswordEncoder passwordEncoder) {
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @PostMapping("/auth/signin")
     public ResponseEntity<String> authenticateUser(@RequestBody LoginDTO loginDto){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsernameOrEmail(), loginDto.getPassword()));
@@ -41,8 +52,8 @@ public class AuthController {
         return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignupDTO signUpDto){
+    @PostMapping("/auth/signup")
+    public ResponseEntity<String> registerUser(@RequestBody SignupDTO signUpDto){
 
         // add check for username exists in a DB
         if(userRepository.existsByUsername(signUpDto.getUsername())){

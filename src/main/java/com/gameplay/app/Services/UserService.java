@@ -3,6 +3,7 @@ package com.gameplay.app.Services;
 import com.gameplay.app.Entities.Role;
 import com.gameplay.app.Entities.User;
 import com.gameplay.app.Repos.UserRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
     private UserRepo userRepo;
-
+    @Autowired
     public UserService(UserRepo userRepo) {
         this.userRepo = userRepo;
     }

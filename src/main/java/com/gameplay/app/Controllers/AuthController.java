@@ -6,6 +6,7 @@ import com.gameplay.app.Entities.Role;
 import com.gameplay.app.Entities.User;
 import com.gameplay.app.Repos.RoleRepo;
 import com.gameplay.app.Repos.UserRepo;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import java.util.Collections;
 
 @RestController
 @RequestMapping(value = "/api")
+
 public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;

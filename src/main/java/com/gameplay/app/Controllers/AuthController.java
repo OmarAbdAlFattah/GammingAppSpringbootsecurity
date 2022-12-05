@@ -87,7 +87,7 @@ public class AuthController {
     }
 
     @PostMapping("/dicescore")
-    public ResponseEntity<String> playDiceScore(@RequestBody DiceScoreRequestDTO diceScoreRequestDTO){
+    public static ResponseEntity<String> playDiceScore(@RequestBody DiceScoreRequestDTO diceScoreRequestDTO){
         return new ResponseEntity<>(((Integer) DiceScore.diceScore(diceScoreRequestDTO.getArr())).toString(), HttpStatus.OK);
     }
 

@@ -1,7 +1,10 @@
-package com.gameplay.app.Games;
+package com.gameplay.app.Services.Games;
+
+import org.springframework.stereotype.Service;
 
 import java.util.Stack;
 
+@Service
 public class TowerOfHanoi {
     public static int counter;
     public static int hanoi(int numberOfDisks, char source, char dest, char aux){
@@ -19,12 +22,5 @@ public class TowerOfHanoi {
             counter++;
             return counter;
         }
-    }
-
-    public static void main(String args[])
-    {
-        int n = 0; // Number of disks
-
-        System.out.println(hanoi(n, 'A','C', 'B')); // A, B and C are names of rods
     }
 }

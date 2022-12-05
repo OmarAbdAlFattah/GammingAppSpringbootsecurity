@@ -1,5 +1,8 @@
-package com.gameplay.app.Games;
+package com.gameplay.app.Services.Games;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class DiceScore {
 
     public static int[] calcFreq(int[] arr){
@@ -9,9 +12,9 @@ public class DiceScore {
         }
         return freq;
     }
-    public static void main(String args[])
-    {
-        int[] arr = {5,1,3,4,1};
+
+    public static int diceScore(int[] arr){
+
         int[] freq = calcFreq(arr);
         int result = 0;
 
@@ -30,7 +33,6 @@ public class DiceScore {
                 result += (i+1)*100;
             }
         }
-        System.out.println("TOTAL VALUE IS " + result);
-
+        return result;
     }
 }

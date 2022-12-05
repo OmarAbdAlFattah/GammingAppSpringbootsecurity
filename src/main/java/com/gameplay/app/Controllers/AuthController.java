@@ -1,12 +1,14 @@
 package com.gameplay.app.Controllers;
 
-import com.gameplay.app.DTOS.Requests.LoginDTO;
-import com.gameplay.app.DTOS.Requests.SignupDTO;
+import com.gameplay.app.DTOS.Requests.*;
 import com.gameplay.app.Entities.Role;
 import com.gameplay.app.Entities.User;
 import com.gameplay.app.Repos.RoleRepo;
 import com.gameplay.app.Repos.UserRepo;
-import lombok.AllArgsConstructor;
+import com.gameplay.app.Services.Games.DiceScore;
+import com.gameplay.app.Services.Games.PokemonDamageCalculator;
+import com.gameplay.app.Services.Games.RPS;
+import com.gameplay.app.Services.Games.TowerOfHanoi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,7 +58,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<String> registerUser(@RequestBody SignupDTO signUpDto){
+    public ResponseEntity<String> playDiceScore(@RequestBody SignupDTO signUpDto){
 
         // add check for username exists in a DB
         if(userRepository.existsByUsername(signUpDto.getUsername())){
@@ -82,4 +85,33 @@ public class AuthController {
         return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
 
     }
-}
+
+    @PostMapping("/dicescore")
+    public ResponseEntity<String> playDiceScore(@RequestBody DiceScoreRequestDTO diceScoreRequestDTO){
+        return new ResponseEntity<>(((Integer) DiceScore.diceScore(diceScoreRequestDTO.getArr())).toString(), HttpStatus.OK);
+    }
+
+    @PostMapping("/pokemondamage")
+    public ResponseEntity<String> playPokemonDamage(@RequestBody PokemonDamageCalcRequestDTO pokemonDamageCalcRequestDTO){
+        return new ResponseEntity<>(PokemonDamageCalculator.calcDamage(
+                pokemonDamageCalcRequestDTO.getType1(),
+                pokemonDamageCalcRequestDTO.getType2(),
+                pokemonDamageCalcRequestDTO.getAttack(),
+                pokemonDamageCalcRequestDTO.getDefence()
+        )+"", HttpStatus.OK);
+    }
+
+    @PostMapping("/rockpaperscissor")
+    public ResponseEntity<String> playRPS(@RequestBody RPSRequestDTO rpsRequestDTO){
+        return new ResponseEntity<>(RPS.rps(rpsRequestDTO.getChoice1(), rpsRequestDTO.getChoice2()), HttpStatus.OK);
+    }
+
+    @PostMapping("/towerofhanoi")
+    public ResponseEntity<String> playTowerOfHanoi(@RequestBody TowerOfHanoiRequestDTO towerOfHanoiRequestDTO){
+        return new ResponseEntity<>(Integer.toString(TowerOfHanoi.hanoi(towerOfHanoiRequestDTO.getNumberOfDisks(),
+                towerOfHanoiRequestDTO.getSource(),
+                towerOfHanoiRequestDTO.getDest(),
+                towerOfHanoiRequestDTO.getAux())), HttpStatus.OK);
+    }
+
+    }

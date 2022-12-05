@@ -1,4 +1,8 @@
-package com.gameplay.app.Games;
+package com.gameplay.app.Services.Games;
+
+import org.springframework.stereotype.Service;
+
+@Service
 
 public class PokemonDamageCalculator {
 
@@ -71,13 +75,5 @@ public class PokemonDamageCalculator {
     public static double calcDamage(String type1, String type2, double attack, double defence) {
         double effect = calcEffectiveness(type1, type2);
         return 50 * (attack / defence) * effect;
-    }
-
-    public static void main(String args[])
-    {
-        String type1 = "electric";
-        String type2 = "fire";
-
-        System.out.println(calcDamage(type1, type2, 100, 100));
     }
 }

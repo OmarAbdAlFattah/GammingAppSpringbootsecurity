@@ -1,7 +1,10 @@
-package com.gameplay.app.Games;
+package com.gameplay.app.Services.Games;
+
+import org.springframework.stereotype.Service;
 
 import java.util.Locale;
 
+@Service
 public class RPS {
     
     public static String rps(String choice1, String choice2){
@@ -25,9 +28,5 @@ public class RPS {
             }
         }
         return result;
-    }
-    public static void main(String args[])
-    {
-        System.out.println(rps("rock", "scissor")); // A, B and C are names of rods
     }
 }

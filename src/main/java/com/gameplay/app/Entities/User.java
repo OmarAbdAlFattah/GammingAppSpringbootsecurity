@@ -1,9 +1,7 @@
 package com.gameplay.app.Entities;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -25,6 +23,10 @@ public class User {
 
     private String email;
     private String password;
+
+    public User(String name) {
+        this.name = name;
+    }
 
     public User(Long id, String name, String username, String email) {
         this.id = id;

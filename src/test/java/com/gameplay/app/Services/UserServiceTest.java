@@ -27,21 +27,6 @@ class UserServiceTest {
     @Mock
     private UserRepo userRepo;
 
-//    private AutoCloseable autoCloseable;
-
-
-
-//    @BeforeEach
-//    void setUp() {
-//        autoCloseable = MockitoAnnotations.openMocks(this);
-//        userService = new UserService(userRepo);
-//    }
-//
-//    @AfterEach
-//    void tearDown() throws Exception {
-//        autoCloseable.close();
-//    }
-
     @Test
     void loadUserByUsername() {
 //        String usernameOrEmail = "omarMail@gmail.com";

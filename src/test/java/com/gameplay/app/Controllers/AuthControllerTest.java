@@ -1,27 +1,36 @@
 package com.gameplay.app.Controllers;
 
+import com.gameplay.app.AppApplication;
 import com.gameplay.app.DTOS.Requests.LoginDTO;
 import com.gameplay.app.DTOS.Requests.SignupDTO;
 import com.gameplay.app.Entities.Role;
 import com.gameplay.app.Entities.User;
 import com.gameplay.app.Repos.RoleRepo;
 import com.gameplay.app.Repos.UserRepo;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.*;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.Base64Utils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.apache.commons.codec.binary.Base64;
 
+import java.lang.Object;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,9 +38,12 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-
+@SpringBootTest(classes = AppApplication.class,
+        webEnvironment = WebEnvironment.RANDOM_PORT)
 class AuthControllerTest {
 
+    @LocalServerPort
+    int randomServerPort;
     @Mock
     RoleRepo roleRepo;
     @Mock
@@ -94,5 +106,39 @@ class AuthControllerTest {
 
         ResponseEntity<String> responseEntity = controller.registerUser(signupDto);
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
+    }
+
+    @Test
+    public void loginUserWithBody_success () throws URISyntaxException {
+
+        String plainCreds = "omarUserNameko:password";
+        byte[] plainCredsBytes = plainCreds.getBytes();
+        byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+        String base64Creds = new String(base64CredsBytes);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Basic " + base64Creds);
+
+        HttpEntity<String> request = new HttpEntity<String>(headers);
+//        HttpEntity<LoginDTO> request = new HttpEntity<>(new LoginDTO("omarUserNameko", "password"));
+
+        LoginDTO loginDTO = new LoginDTO("omarUserNameko","password");
+        URI uri = new URI("http://localhost:" + randomServerPort + "/api/auth/signin");
+        RestTemplate restTemplate=new RestTemplate();
+        ResponseEntity<String> createdCustomer = restTemplate.postForEntity(uri, loginDTO, String.class);
+        assertThat(createdCustomer.getStatusCodeValue()).isEqualTo(200);
+        Assertions.assertEquals(createdCustomer.getBody().toString(),"User signed-in successfully!.");
+
+//        HttpHeaders headers = new HttpHeaders();
+//        RestTemplate restTemplate = new RestTemplate();
+//        URI uri = new URI("http://localhost:" + randomServerPort + "/api/auth/signin");
+//        HttpEntity<LoginDTO> request = new HttpEntity<>(new LoginDTO("omarUserNameko", "password"));
+//        Assertions.assertEquals(response.getStatusCode(), HttpStatus.CREATED);
+//
+//        String loggedIn = response.getBody().toString();
+//
+//
+//        Assertions.assertNotNull(loggedIn);
+
     }
 }

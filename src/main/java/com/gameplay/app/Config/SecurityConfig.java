@@ -20,11 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 @EnableWebSecurity
 @Transactional
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
-
 
     @Bean
     PasswordEncoder passwordEncoder(){
@@ -38,6 +38,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/auth/**").permitAll()
                 .and().authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
+                .and().authorizeRequests()
+                .antMatchers("/actuator/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -55,6 +57,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
 
 }

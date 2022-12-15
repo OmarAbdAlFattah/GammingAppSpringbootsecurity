@@ -5,10 +5,7 @@ import com.gameplay.app.Entities.Role;
 import com.gameplay.app.Entities.User;
 import com.gameplay.app.Repos.RoleRepo;
 import com.gameplay.app.Repos.UserRepo;
-import com.gameplay.app.Services.Games.DiceScore;
-import com.gameplay.app.Services.Games.PokemonDamageCalculator;
-import com.gameplay.app.Services.Games.RPS;
-import com.gameplay.app.Services.Games.TowerOfHanoi;
+import com.gameplay.app.Services.Games.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -116,4 +113,9 @@ public class AuthController {
                 towerOfHanoiRequestDTO.getAux())), HttpStatus.OK);
     }
 
+    @PostMapping("/bowling")
+    public ResponseEntity<Integer> playBowling(@RequestBody BowlingDTO bowlingDTO) {
+        Bowling bowling = new Bowling();
+        return new ResponseEntity<>((Integer) bowling.play(bowlingDTO.getRolls()), HttpStatus.OK);
     }
+}

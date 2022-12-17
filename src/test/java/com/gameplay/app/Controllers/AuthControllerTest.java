@@ -16,22 +16,25 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.apache.commons.codec.binary.Base64;
 
-import java.lang.Object;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -56,7 +59,11 @@ class AuthControllerTest {
     private PasswordEncoder passwordEncoder;
     @InjectMocks
     AuthController controller;
-
+    @Bean
+    public RestTemplate restTemplate()
+    {
+        return new RestTemplate();
+    }
     @Test
     public void loginUserThroughBody_success() throws Exception {
         LoginDTO loginDto = new LoginDTO("omarUserNameko", "password");
@@ -110,35 +117,27 @@ class AuthControllerTest {
 
     @Test
     public void loginUserWithBody_success () throws URISyntaxException {
-
-        String plainCreds = "omarUserNameko:password";
-        byte[] plainCredsBytes = plainCreds.getBytes();
-        byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
-        String base64Creds = new String(base64CredsBytes);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Basic " + base64Creds);
-
-        HttpEntity<String> request = new HttpEntity<String>(headers);
-//        HttpEntity<LoginDTO> request = new HttpEntity<>(new LoginDTO("omarUserNameko", "password"));
-
         LoginDTO loginDTO = new LoginDTO("omarUserNameko","password");
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginDTO.getUsernameOrEmail(), loginDTO.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         URI uri = new URI("http://localhost:" + randomServerPort + "/api/auth/signin");
-        RestTemplate restTemplate=new RestTemplate();
-        ResponseEntity<String> createdCustomer = restTemplate.postForEntity(uri, loginDTO, String.class);
-        assertThat(createdCustomer.getStatusCodeValue()).isEqualTo(200);
-        Assertions.assertEquals(createdCustomer.getBody().toString(),"User signed-in successfully!.");
+        ResponseEntity<String> createdCustomer = restTemplate().postForEntity(uri, loginDTO,String.class );
+        Assertions.assertEquals(createdCustomer.getBody(),"User signed-in successfully!.");
+    }
 
-//        HttpHeaders headers = new HttpHeaders();
-//        RestTemplate restTemplate = new RestTemplate();
-//        URI uri = new URI("http://localhost:" + randomServerPort + "/api/auth/signin");
-//        HttpEntity<LoginDTO> request = new HttpEntity<>(new LoginDTO("omarUserNameko", "password"));
-//        Assertions.assertEquals(response.getStatusCode(), HttpStatus.CREATED);
-//
-//        String loggedIn = response.getBody().toString();
-//
-//
-//        Assertions.assertNotNull(loggedIn);
-
+    @Test
+    public void signupUserWithBody_success() throws URISyntaxException {
+//        Role roles = roleRepo.findByName("ROLE_ADMIN").get();
+        SignupDTO signupDTO = new SignupDTO(
+                "Omar", "omarUserNameko",
+                "omarMailko@gmail.com",
+                "password"
+        );
+        URI uri = new URI("http://localhost:" + randomServerPort + "/api/auth/signup");
+        ResponseEntity<String> createdCustomer = restTemplate().postForEntity(uri,signupDTO,String.class);
+        Assertions.assertEquals(createdCustomer.getBody(),"User registered successfully");
     }
 }

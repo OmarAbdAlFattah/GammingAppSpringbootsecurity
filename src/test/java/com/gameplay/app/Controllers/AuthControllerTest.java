@@ -28,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,6 +52,9 @@ class AuthControllerTest {
     RoleRepo roleRepo;
     @Mock
     UserRepo userRepo;
+
+    @Mock
+    TestRestTemplate testRestTemplate;
 
     @Mock
     AuthenticationManager authenticationManager;
@@ -124,8 +128,10 @@ class AuthControllerTest {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         URI uri = new URI("http://localhost:" + randomServerPort + "/api/auth/signin");
-        ResponseEntity<String> createdCustomer = restTemplate().postForEntity(uri, loginDTO,String.class );
-        Assertions.assertEquals(createdCustomer.getBody(),"User signed-in successfully!.");
+
+        //ResponseEntity<String> createdCustomer =
+                Assertions.assertEquals(testRestTemplate.withBasicAuth(loginDTO.getUsernameOrEmail(),loginDTO.getPassword())
+                        .postForEntity(uri, loginDTO,String.class ).getBody(),"User signed-in successfully!.");
     }
 
     @Test

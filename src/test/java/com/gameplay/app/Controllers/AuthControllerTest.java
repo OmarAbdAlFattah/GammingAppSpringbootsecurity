@@ -108,7 +108,7 @@ class AuthControllerTest {
         try {
         when(userRepo.existsByUsername(signupDto.getUsername())).thenReturn(false);
         when(userRepo.existsByEmail(signupDto.getEmail())).thenReturn(false);
-        when(roleRepo.findByName(any())).thenReturn(Optional.of(role));
+//        when(roleRepo.findByName(any())).thenReturn(Optional.of(role));
         } catch (NoSuchElementException nsee) {
             System.err.println("Sorry, Couldn't find Role");
         }
@@ -129,9 +129,9 @@ class AuthControllerTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         URI uri = new URI("http://localhost:" + randomServerPort + "/api/auth/signin");
 
-        //ResponseEntity<String> createdCustomer =
-                Assertions.assertEquals(testRestTemplate.withBasicAuth(loginDTO.getUsernameOrEmail(),loginDTO.getPassword())
-                        .postForEntity(uri, loginDTO,String.class ).getBody(),"User signed-in successfully!.");
+        testRestTemplate.withBasicAuth(loginDTO.getUsernameOrEmail(),loginDTO.getPassword());
+        ResponseEntity<String> createdCustomer = restTemplate().postForEntity(uri, loginDTO,String.class );
+                Assertions.assertEquals(createdCustomer.getBody(),"User signed-in successfully!.");
     }
 
     @Test

@@ -40,6 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/auth/**").permitAll()
                 .and().authorizeRequests()
                 .antMatchers("/actuator/**").permitAll()
+                .and().authorizeRequests()
+                .antMatchers("/index").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -57,5 +59,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
 }

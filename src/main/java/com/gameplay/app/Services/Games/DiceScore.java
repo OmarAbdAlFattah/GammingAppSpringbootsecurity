@@ -4,9 +4,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DiceScore {
-
-
-
     public static int[] calcFreq(int[] arr){
         int[] freq = {0,0,0,0,0,0};
         for (int i : arr) {

@@ -35,7 +35,10 @@ public class User {
         this.email = email;
     }
 
-
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles",
